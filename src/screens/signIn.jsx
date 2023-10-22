@@ -2,13 +2,15 @@ import { useNavigation } from "@react-navigation/native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   Pressable,
   SafeAreaView,
   StyleSheet,
   Text,
-  View
+  View,
 } from "react-native";
+import { showMessage } from "react-native-flash-message";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { colors } from "../thems/colors";
@@ -16,28 +18,44 @@ import { spacing } from "../thems/spacing";
 
 export default function SignIn() {
   const navigation = useNavigation();
+  const [loading, setLoading] = useState(false); // loading function
 
-//state
-const [email, setEmail] = useState('');
-const [password, setPassword] = useState("");
-//signIn
+  //state
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  //signIn
 
-const signIn = ()=>{
-  const auth = getAuth();
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // Signed in 
-      const user = userCredential.user;
-      console.log("sign In -> ",user);
-      // ...
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-    });
-}
+  const signIn = () => {
+    setLoading(true);
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log("sign In -> ", user);
+        setLoading(false);
+      })
+      .catch((error) => {
+        // const errorCode = error.code;
+        // const errorMessage = error.message;
+        showMessage({
+          message: "ERROR 😢",
+          description: "give the correct email & password",
+          type: "danger",
+          backgroundColor: "#070724",
+          color: "#F5D949",
+          style: { justifyContent: "center", alignItems: "center" },
+        });
+        setLoading(false);
+      });
+  };
 
-
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItem: "center" }}>
+        <ActivityIndicator color={colors.yellow} />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -50,10 +68,17 @@ const signIn = ()=>{
       </Text>
 
       <View style={{ paddingHorizontal: 16, paddingVertical: 25 }}>
-      <Input placeholder={'Enter Email Address'} onChangeText={(text)=>setEmail(text)}/>
-      <Input placeholder={'Enter Password'} secureTextEntry={false} onChangeText={(text)=>setPassword(text)}/>
+        <Input
+          placeholder={"Enter Email Address"}
+          onChangeText={(text) => setEmail(text)}
+          autoCapitalize={"none"}
+        />
+        <Input
+          placeholder={"Enter Password"}
+          onChangeText={(text) => setPassword(text)}
+          secureTextEntry={false}
+        />
       </View>
-
 
       <View
         style={{
@@ -68,7 +93,11 @@ const signIn = ()=>{
           customStyles={{ alignSelf: "center", marginBottom: 40 }}
           onPress={signIn}
         />
-        <Pressable onPress={()=>{navigation.navigate('SignUp')}}>
+        <Pressable
+          onPress={() => {
+            navigation.navigate("SignUp");
+          }}
+        >
           <Text>
             Don't have an account ? <Text style={styles.signIn}>Sign Up</Text>
           </Text>

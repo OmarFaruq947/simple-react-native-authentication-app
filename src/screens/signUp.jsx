@@ -1,7 +1,17 @@
 import { useNavigation } from "@react-navigation/native";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { addDoc, collection, getFirestore } from "firebase/firestore";
 import React, { useState } from "react";
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { showMessage } from "react-native-flash-message";
+import { app } from "../../App";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { colors } from "../thems/colors";
@@ -10,42 +20,77 @@ import { spacing } from "../thems/spacing";
 export default function SignUp() {
   const navigation = useNavigation();
   const genderOption = ["Male", "Female"];
+  const [loading, setLoading] = useState(false); // loading function
+
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
   // state
   const [gender, setGender] = useState(null);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [age, setAge] = useState("");
-  const [name, setName] = useState("")
+  const [name, setName] = useState("");
 
+  // firebase auth instance
 
-// firebase auth instance
-const auth = getAuth();
+  const signUp = async () => {
+    setLoading(true);
+    try {
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      console.log("result-->", result);
+      await addDoc(collection(db, "users"), {
+        name: name,
+        email: email,
+        age: age,
+        uid: result.user.uid,
+      });
+      setLoading(false);
+    } catch (error) {
+      showMessage({
+        message: "ERROR 😢",
+        description: "your email already exist",
+        type: "danger",
+      });
+      setLoading(false);
+    }
+  };
 
-
-
-  const signUp = ()=>{
-    createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // Signed up 
-      const user = userCredential.user;
-      console.log(user);
-      // ...
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // ..
-    });
+  //loading
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItem: "center" }}>
+        <ActivityIndicator color={colors.yellow} />
+      </View>
+    );
   }
- 
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ paddingHorizontal: 16, paddingVertical: 25 }}>
-        <Input placeholder={"Enter Email Address"} onChangeText={(text)=>setEmail(text)}/>
-        <Input placeholder={"Enter Password"} secureTextEntry onChangeText={(text)=>setPassword(text)}/>
-        <Input placeholder={"Enter Full Name"} onChangeText={(text)=>setName(text)} />
-        <Input placeholder={"Enter Age"} onChangeText={(text)=>setAge(text)}/>
+        <Input
+          placeholder={"Enter Email Address"}
+          onChangeText={(text) => setEmail(text)}
+          autoCapitalize={"none"}
+        />
+        <Input
+          placeholder={"Enter Password"}
+          onChangeText={(text) => setPassword(text)}
+          secureTextEntry
+        />
+        <Input
+          placeholder={"Enter Full Name"}
+          onChangeText={(text) => setName(text)}
+          autoCapitalize={"words"}
+        />
+        <Input
+          placeholder={"Enter Age"}
+          onChangeText={(text) => setAge(text)}
+        />
 
         <Text style={{ marginVertical: 16, fontSize: 16 }}> Select Gender</Text>
         {genderOption.map((option) => {
