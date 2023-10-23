@@ -42,7 +42,7 @@ export default function SignUp() {
         email,
         password
       );
-      console.log("result-->", result);
+      // console.log("result-->", result);
       await addDoc(collection(db, "users"), {
         name: name,
         email: email,
