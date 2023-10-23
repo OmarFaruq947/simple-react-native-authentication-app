@@ -2,11 +2,10 @@
 
 <h1 align="center">Explore Authentication & CRUD Operation</h1>
 <h4 align="center">I have worked on what this App is</h4>
-<h4 align="center">
+
 - UI design
 - Firebase Authentication (Sign in, Sign up, Sign Out)
 - CRUD Operation with firebase (Create, Reade, Update, Delete)
-</h4>
 
 ## App ScreenShort
 
