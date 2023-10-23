@@ -9,24 +9,24 @@
 
 <h4 align="center">List of Core components used</h4>
 
-- <View>
-- <Image>
-- <SageAreaView>
-- <Text>
-- <FlatList>
-- <Pressable>
-- <StyleSheet>
-- <TextInput>
-- <ActivityIndicator>
-- <ActivityIndicator>
-- <TouchableOpacity>
+- View
+- Image
+- SageAreaView
+- Text
+- FlatList
+- Pressable
+- StyleSheet
+- TextInput
+- ActivityIndicator
+- ActivityIndicator
+- TouchableOpacity
 
 <h4 align="center">List of Navigation components used</h4>
 
-- <NavigationContainer>
-- <createNativeStackNavigator>
-- <Stack.Navigator>
-- <useNavigation>
+- NavigationContainer
+- createNativeStackNavigator
+- Stack.Navigator
+- useNavigation
 
   <h4 align="center">firebase/firestore function</h4>
   - collection
